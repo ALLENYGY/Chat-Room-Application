@@ -6,7 +6,7 @@
 //    (Project -> Properties -> Linker -> Input -> Additional Dependencies) 
 // 4. recompile the source.
 
-#include "stdafx.h"
+// #include "stdafx.h"
 #include <winsock2.h>
 #include <stdlib.h>
 #include <stdio.h>

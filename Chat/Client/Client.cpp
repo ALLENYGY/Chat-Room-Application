@@ -20,6 +20,7 @@ string addnewMemberOperation(string groupname);
 string deletenewMemberOperation(string groupname);
 string showRoomMember();
 string sendGroupOperation();
+void printWechat();
 void hintMessage();
 void sendData(SOCKET sock);
 void receiveData(SOCKET sock);
@@ -61,6 +62,7 @@ int main(int argc, char** argv) {
 	}
 
 	printf("Connected to server: %s:%d successfully!\n", server_name, port);
+	printWechat();
 	printf("Type 'E' to close the connection\n");
 	string command=renameOperation();
 	sendToServer(connect_sock, command);
@@ -307,4 +309,33 @@ bool checknumber(string num) {
 		}
 	}
 	return true;
+}
+void printWechat(){
+    printf("                 ,EEEEEEi                         \n");
+    printf("               EEEEt..tEEEE                       \n");
+    printf("             LEE          GEE                     \n");
+    printf("            EE              EE                    \n");
+    printf("           EE                EE                   \n");
+    printf("          GE     G     tj     EE                  \n");
+    printf("          E     EEE    EEG     E                  \n");
+    printf("         iE     EE.    EE      EL                 \n");
+    printf("         EE                    LE                 \n");
+    printf("         Ei                  .LEEi                \n");
+    printf("         Et               iEEEEEEEEEG             \n");
+    printf("         EE             .EEj       .EEG           \n");
+    printf("         jE             EE           LEj          \n");
+    printf("          E            EG              E.         \n");
+    printf("          EE          EE   EEj    EE   tE         \n");
+    printf("           EE         E    EEi    EE    Et        \n");
+    printf("            EE       tE                 GE        \n");
+    printf("             EE      EE                 iE        \n");
+    printf("             EE EG   LE                 LE        \n");
+    printf("             EEELEEEEEE                 EL        \n");
+    printf("            EEE       EG                E         \n");
+    printf("            G          E               EG         \n");
+    printf("                       jEE            EE          \n");
+    printf("                        .EEj        iEE           \n");
+    printf("                          iEEEEEEEEE Ej           \n");
+    printf("                             .LEGi EEEE           \n");
+    printf("                                     tE           \n");
 }

@@ -9,6 +9,36 @@
 #pragma comment(lib, "ws2_32.lib")
 #define DEFAULT_PORT	5019
 
+string wechatIcon = R"(
+                 ,EEEEEEi                         
+               EEEEt..tEEEE                       
+             LEE          GEE                     
+            EE              EE                    
+           EE                EE                   
+          GE     G     tj     EE                  
+          E     EEE    EEG     E                  
+         iE     EE.    EE      EL                 
+         EE                    LE                 
+         Ei                  .LEEi                
+         Et               iEEEEEEEEEG             
+         EE             .EEj       .EEG           
+         jE             EE           LEj          
+          E            EG              E.         
+          EE          EE   EEj    EE   tE         
+           EE         E    EEi    EE    Et        
+            EE       tE                 GE        
+             EE      EE                 iE        
+             EE EG   LE                 LE        
+             EEELEEEEEE                 EL        
+            EEE       EG                E         
+            G          E               EG         
+                       jEE            EE          
+                        .EEj        iEE           
+                          iEEEEEEEEE Ej           
+                             .LEGi EEEE           
+                                     tE           
+)";
+
 using namespace std;
 
 string sendOperation();
@@ -20,12 +50,19 @@ string addnewMemberOperation(string groupname);
 string deletenewMemberOperation(string groupname);
 string showRoomMember();
 string sendGroupOperation();
+
 void printWechat();
 void hintMessage();
 void sendData(SOCKET sock);
 void receiveData(SOCKET sock);
 void sendToServer(SOCKET sock, string sendBuff);
 bool checknumber(string num);
+void red_print(string out);
+void green_print(string out);
+void blue_print(string out);
+void printWechat();
+
+
 string username;
 bool flag = true;
 
@@ -61,9 +98,9 @@ int main(int argc, char** argv) {
 		return -1;
 	}
 
-	printf("Connected to server: %s:%d successfully!\n", server_name, port);
+	// printf("Connected to server: %s:%d successfully!\n", server_name, port);
 	printWechat();
-	printf("Type 'E' to close the connection\n");
+	// printf("Type 'E' to close the connection\n");
 	string command=renameOperation();
 	sendToServer(connect_sock, command);
 	hintMessage();
@@ -77,33 +114,35 @@ int main(int argc, char** argv) {
 	closesocket(connect_sock);
 	WSACleanup();
 	return 0;
+
 }
 
 
 void hintMessage() {
-	printf("------------------------------------------------------------------\n");
-	cout << "Hello," << username << "! Welcome to Chat Room!\n";
-	printf("------------------------------------------------------------------\n");
-	printf("Type 'R' to Rename yourself\n");						// Rename username
-	printf("Type 'S' to Send messages to a specific member\n");		// Send messages to a specific member
-	printf("Type 'E' to Exit\n");									// Quit the Chat Room
-	printf("Type 'L' to List all members in the chat room\n");		// List all members in the chat room
-	printf("Type 'C' to Create a new group\n");						// Create a new group
-	printf("Type 'A' to Add a member to the group\n");				// Add a member to the group
-	printf("Type 'D' to Delete a member from the group\n");			// Delete a member from the group
-	printf("Type 'G' to Send messages to the group\n");				// Send messages to the group
-	printf("------------------------------------------------------------------\n");
+	string msg="Hello, " + username + "! Welcome to Chat Room!\n";
+	blue_print("------------------------------------------------------------------\n");
+	blue_print(msg);
+	blue_print("------------------------------------------------------------------\n");
+	blue_print("Type 'R' to Rename yourself\n");						// Rename username
+	blue_print("Type 'S' to Send messages to a specific member\n");		// Send messages to a specific member
+	blue_print("Type 'E' to Exit\n");									// Quit the Chat Room
+	blue_print("Type 'L' to List all members in the chat room\n");		// List all members in the chat room
+	blue_print("Type 'C' to Create a new group\n");						// Create a new group
+	blue_print("Type 'A' to Add a member to the group\n");				// Add a member to the group
+	blue_print("Type 'D' to Delete a member from the group\n");			// Delete a member from the group
+	blue_print("Type 'G' to Send messages to the group\n");				// Send messages to the group
+	blue_print("------------------------------------------------------------------\n");
 }
 
 string sendOperation() {
 	string prefix = "S";
-	cout << "Enter the ID of the member you want to send a message to: \n";
+	blue_print("Enter the ID of the member you want to send a message to: \n");
 	string id; cin >> id;
 	if (!checknumber(id)) {
-		printf("Invalid ID.\n");
+		red_print("Invalid ID.\n");
 		return "";
 	}
-	cout << "Enter the message you want to send:\n";
+	blue_print("Enter the message you want to send:\n");
 	string msg; cin.ignore();
 	getline(cin,msg);
 	string command = prefix + "*" + id + "*" + msg + "*\0";
@@ -112,9 +151,9 @@ string sendOperation() {
 
 string sendGroupOperation() {
 	string prefix = "G";
-	cout << "Enter the Group Name: \n";
+	blue_print("Enter the Group Name: \n");
 	string gname; cin >> gname;
-	cout << "Enter the message you want to send:\n";
+	blue_print("Enter the message you want to send:\n");
 	string msg; cin.ignore();
 	getline(cin, msg);
 	string command = prefix + "*" + gname + "*" + msg + "*\0";
@@ -123,7 +162,7 @@ string sendGroupOperation() {
 
 string renameOperation() {
 	string prefix = "R";
-	printf("Enter your new name: ");
+	blue_print("Enter your new name: ");
 	cin >> username;
 	string command = prefix + "*" + username + "*\0";
 	return command;
@@ -131,20 +170,22 @@ string renameOperation() {
 
 string createGroupOperation(SOCKET sock) {
 	string prefix = "C";
-	printf("Enter your Group name: ");
+	blue_print("Enter your Group name: ");
 	string groupname;
 	cin >> groupname;
 	string command = prefix + "*" + groupname+"*\0";
 	sendToServer(sock, command);
-	printf("Here is the member in the Chat room that You can invite!\n");
+	blue_print("Here is the member in the Chat room that You can invite!\n");
 	sendToServer(sock, showRoomMember());
 	sendToServer(sock, addnewMemberOperation(groupname));
-	printf("Group %s has been created.\n", groupname.c_str());
+	// printf("", groupname.c_str());
+	string msg="Group "+ groupname.c_str() +" has been created.\n";
+	blue_print(msg);
 	return command;
 }
 
 string addMemberOperation() {
-	printf("Enter the Group name:\n");
+	blue_print("Enter the Group name:\n");
 	string groupname;
 	cin >> groupname;
 	string command= addnewMemberOperation(groupname);
@@ -154,13 +195,13 @@ string addMemberOperation() {
 string addnewMemberOperation(string groupname) {
 	string prefix = "A";
 	prefix += "*" + groupname + "*";
-	printf("Enter the UserID that you want to invite: (end with #)\n");
+	blue_print("Enter the UserID that you want to invite: (end with #)\n");
 	string id;
 	int count = 0;
 	string command = prefix + "*";
 	cin >> id;
 	if (!checknumber(id)) {
-		printf("Invalid ID.\n");
+		red_print("Invalid ID.\n");
 		return "";
 	}
 	while (id != "#") {
@@ -168,7 +209,7 @@ string addnewMemberOperation(string groupname) {
 		count++;
 		cin >> id;
 		if (!checknumber(id) && id!="#") {
-			printf("Invalid ID.\n");
+			red_print("Invalid ID.\n");
 			return "";
 		}
 	}
@@ -177,7 +218,7 @@ string addnewMemberOperation(string groupname) {
 }
 
 string deleteMemberOperation() {
-	printf("Enter the Group name:\n");
+	blue_print("Enter the Group name:\n");
 	string groupname;
 	cin >> groupname;
 	string command = deletenewMemberOperation(groupname);
@@ -188,13 +229,13 @@ string deleteMemberOperation() {
 string deletenewMemberOperation(string groupname) {
 	string prefix = "D";
 	prefix += "*"+ groupname + "*";
-	printf("Enter the UserID that you want to delete: (end with #)\n");
+	blue_print("Enter the UserID that you want to delete: (end with #)\n");
 	string id;
 	int count = 0;
 	string command = prefix + "*";
 	cin>> id;
 	if (!checknumber(id)) {
-		printf("Invalid ID.\n");
+		red_print("Invalid ID.\n");
 		return "";
 	}
 	while (id != "#") {
@@ -202,7 +243,7 @@ string deletenewMemberOperation(string groupname) {
 		count++;
 		cin >> id;
 		if (!checknumber(id) && id != "#") {
-			printf("Invalid ID.\n");
+			red_print("Invalid ID.\n");
 			return "";
 		}
 	}	
@@ -229,7 +270,7 @@ void sendToServer(SOCKET sock,string sendBuff) {
 void sendData(SOCKET sock) {
 	string sendBuff;
 	while (true) {
-		printf("Select your operation: Type 'H' to get help.\n");
+		blue_print("Select your operation: Type 'H' to get help.\n");
 		char command;
 		cin >> command;
 		switch (command) {
@@ -253,7 +294,7 @@ void sendData(SOCKET sock) {
 		case 'E':
 			sendBuff = "E\0";
 			sendToServer(sock, sendBuff);
-			cout << "Bye!" << endl; flag = false;
+			blue_print("Bye!\n"); flag = false;
 			return;
 		case 'C':
 			sendBuff = createGroupOperation(sock);
@@ -273,7 +314,7 @@ void sendData(SOCKET sock) {
 			sendToServer(sock, sendBuff);
 			break;
 		default:
-			printf("Invalid command.\n");
+			red_print("Invalid command.\n");
 			hintMessage();
 			break;
 		}
@@ -287,10 +328,12 @@ void receiveData(SOCKET sock) {
 		memset(recvBuff, 0, sizeof(recvBuff));
 		bytesReceived = recv(sock, recvBuff, sizeof(recvBuff), 0);
 		if (bytesReceived > 0) {
-			printf("%s\n", recvBuff);
+			string msg=recvBuff.c_str()+"\n";
+			blue_print(msg);
+			// blue_print("%s\n", recvBuff);
 		}
 		else if (bytesReceived == 0) {
-			printf("Server closed the connection\n");
+			red_print("Server closed the connection\n");
 			break;
 		}
 		else {
@@ -310,32 +353,26 @@ bool checknumber(string num) {
 	}
 	return true;
 }
-void printWechat(){
-    printf("                 ,EEEEEEi                         \n");
-    printf("               EEEEt..tEEEE                       \n");
-    printf("             LEE          GEE                     \n");
-    printf("            EE              EE                    \n");
-    printf("           EE                EE                   \n");
-    printf("          GE     G     tj     EE                  \n");
-    printf("          E     EEE    EEG     E                  \n");
-    printf("         iE     EE.    EE      EL                 \n");
-    printf("         EE                    LE                 \n");
-    printf("         Ei                  .LEEi                \n");
-    printf("         Et               iEEEEEEEEEG             \n");
-    printf("         EE             .EEj       .EEG           \n");
-    printf("         jE             EE           LEj          \n");
-    printf("          E            EG              E.         \n");
-    printf("          EE          EE   EEj    EE   tE         \n");
-    printf("           EE         E    EEi    EE    Et        \n");
-    printf("            EE       tE                 GE        \n");
-    printf("             EE      EE                 iE        \n");
-    printf("             EE EG   LE                 LE        \n");
-    printf("             EEELEEEEEE                 EL        \n");
-    printf("            EEE       EG                E         \n");
-    printf("            G          E               EG         \n");
-    printf("                       jEE            EE          \n");
-    printf("                        .EEj        iEE           \n");
-    printf("                          iEEEEEEEEE Ej           \n");
-    printf("                             .LEGi EEEE           \n");
-    printf("                                     tE           \n");
+
+
+void red_print(string out)
+{
+    cout << "\033[31;1m" << out << "\033[0m" << endl;
 }
+
+void green_print(string out)
+{
+    cout << "\033[32;1m" << out << "\033[0m" << endl;
+}
+
+void blue_print(string out)
+{
+    cout << "\033[34;1m" << out << "\033[0m" << endl;
+}
+
+void printWechat()
+{
+    green_print(wechatIcon);
+}
+
+

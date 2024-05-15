@@ -109,7 +109,7 @@ int main(int argc, char** argv) {
 	thread recvThread(receiveData, connect_sock);
 	// Wait for the send thread to finish before closing
 	sendThread.join();
-	recvThread.detach();  // Receive thread can be detached as it will exit on server close
+	recvThread.join();  
 	// Cleanup
 	closesocket(connect_sock);
 	WSACleanup();

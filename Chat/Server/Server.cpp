@@ -16,19 +16,19 @@
 using namespace std;
 
 struct terminal {
-	int id;
-	bool isLogged;
-	string name;
-	SOCKET sock;
-	queue<string> messageQueue;  
+	int id;        // Client ID
+	bool isLogged; // Whether the client is logged in
+	string name;   // Client name
+	SOCKET sock;   // Client socket
+	queue<string> messageQueue;  // Message queue to store messages to be sent
 	mutex queueMutex;            // Mutex to protect the message queue
 	condition_variable queueCond; // Condition variable to notify the send thread
 };
 
 struct group {
-	int id;
-	string name;
-	vector<int> members;
+	int id; 		// Group ID
+	string name;	// Group name
+	vector<int> members;	// Group members
 };
 
 vector<terminal*> clients;  

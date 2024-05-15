@@ -21,8 +21,8 @@ struct terminal {
 	string name;
 	SOCKET sock;
 	queue<string> messageQueue;  
-	mutex queueMutex;            // 互斥锁保护消息队列
-	condition_variable queueCond; // 条件变量用于通知消息可发送
+	mutex queueMutex;            // Mutex to protect the message queue
+	condition_variable queueCond; // Condition variable to notify the send thread
 };
 
 struct group {
@@ -149,7 +149,7 @@ void recv_message(terminal* client) {
 void send_message(terminal* client) {
 	unique_lock<mutex> lock(client->queueMutex);
 	while (client->isLogged || !client->messageQueue.empty()) {
-		client->queueCond.wait(lock, [&] { return !client->messageQueue.empty() || !client->isLogged; });
+		client->queueCond.wait(lock, [&] { return !client->messageQueue.empty() || !client->isLogged; });// wait until the message queue is not empty
 		while (!client->messageQueue.empty()) {
 			string message = client->messageQueue.front();
 			client->messageQueue.pop();
@@ -282,6 +282,7 @@ void processMessage(terminal* sender, const char* buffer) {
 		break;
 	}
 	case 'E':
+		sender->isLogged = false;
 		disconnect_client(sender);
 		break;
 	default:

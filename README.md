@@ -1,6 +1,4 @@
-# UIC-DCN
-
-UIC Data Communication and Network Course
+# Chat Room Application
 
 The application is developed in visual studio and runs on the windows platform
 
